@@ -1,19 +1,25 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
 node_modules
 dist
-out
-.DS_Store
-.eslintcache
-*.log*
-.vscode/extensions.json
-.vscode/launch.json
-.vscode/settings.json
-/.history
-.idea
+dist-electron
+dist-ssr
+*.local
 
-# uTools 源码缓存（用于同步 API Types）
-.ztools-api-types-source/
-/.cursor
-/.shared
-.pnpm-store/*
-_*
-/.sanshu-memory
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

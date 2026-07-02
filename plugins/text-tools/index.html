@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Tools</title>
+    <style>
+      :root {
+        color: #e7eaf0;
+        background: #111318;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+        padding: 0 10px 0 16px;
+        color: #cbd5e1;
+        background: #171d26;
+        border-bottom: 1px solid #2b3444;
+        -webkit-app-region: drag;
+      }
+
+      .titlebar strong {
+        font-size: 13px;
+      }
+
+      .window-actions {
+        display: flex;
+        gap: 8px;
+        -webkit-app-region: no-drag;
+      }
+
+      main {
+        display: grid;
+        gap: 16px;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 260px;
+        resize: vertical;
+        padding: 14px;
+        color: #f8fafc;
+        background: #171d26;
+        border: 1px solid #303a4a;
+        border-radius: 8px;
+        font: inherit;
+        line-height: 1.5;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      button {
+        min-height: 38px;
+        padding: 0 14px;
+        color: #101318;
+        background: #7cc7a2;
+        border: 0;
+        border-radius: 8px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .icon-button {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        min-height: 32px;
+        padding: 0;
+        color: #dbe7f7;
+        background: #252d3a;
+        border: 1px solid #354154;
+      }
+
+      button.secondary {
+        color: #e7eaf0;
+        background: #252d3a;
+        border: 1px solid #354154;
+      }
+
+      #status {
+        min-height: 22px;
+        color: #99a9bd;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="titlebar">
+      <strong>Text Tools</strong>
+      <div class="window-actions">
+        <button id="pin" class="icon-button" title="Always on top">P</button>
+        <button id="close" class="icon-button" title="Close">X</button>
+      </div>
+    </header>
+    <main>
+      <h1>Text Tools</h1>
+      <textarea id="text" placeholder="Load clipboard text or type here"></textarea>
+      <div class="actions">
+        <button id="read">Read Clipboard</button>
+        <button id="upper" class="secondary">Uppercase</button>
+        <button id="lower" class="secondary">Lowercase</button>
+        <button id="write">Write Clipboard</button>
+      </div>
+      <div id="status"></div>
+    </main>
+
+    <script>
+      const text = document.querySelector('#text')
+      const status = document.querySelector('#status')
+      const pin = document.querySelector('#pin')
+
+      function setStatus(message) {
+        status.textContent = message
+      }
+
+      document.querySelector('#read').addEventListener('click', async () => {
+        text.value = await window.doTools.clipboard.readText()
+        await window.doTools.storage.set('lastText', text.value)
+        setStatus('Clipboard loaded.')
+      })
+
+      document.querySelector('#upper').addEventListener('click', () => {
+        text.value = text.value.toUpperCase()
+        setStatus('Converted to uppercase.')
+      })
+
+      document.querySelector('#lower').addEventListener('click', () => {
+        text.value = text.value.toLowerCase()
+        setStatus('Converted to lowercase.')
+      })
+
+      document.querySelector('#write').addEventListener('click', async () => {
+        await window.doTools.clipboard.writeText(text.value)
+        await window.doTools.notification.show({ title: 'Text Tools', body: 'Clipboard updated.' })
+        setStatus('Clipboard updated.')
+      })
+
+      pin.addEventListener('click', async () => {
+        const next = !(await window.doTools.app.isAlwaysOnTop())
+        await window.doTools.app.setAlwaysOnTop(next)
+        pin.textContent = next ? 'P' : 'p'
+        setStatus(next ? 'Window pinned.' : 'Window unpinned.')
+      })
+
+      document.querySelector('#close').addEventListener('click', async () => {
+        await window.doTools.app.closePlugin()
+      })
+
+      window.doTools.storage.get('lastText').then((value) => {
+        if (typeof value === 'string') text.value = value
+      })
+    </script>
+  </body>
+</html>

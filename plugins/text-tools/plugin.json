@@ -1,0 +1,19 @@
+{
+  "manifestVersion": 1,
+  "id": "com.dotools.text-tools",
+  "name": "Text Tools",
+  "version": "1.0.0",
+  "description": "Basic clipboard and text helpers.",
+  "author": "DoTools",
+  "entry": "index.html",
+  "keywords": ["text", "clipboard", "case"],
+  "permissions": ["clipboard.read", "clipboard.write", "storage", "notification"],
+  "commands": [
+    {
+      "id": "clipboard-text-tools",
+      "title": "Clipboard Text Tools",
+      "description": "Read, transform, and write clipboard text.",
+      "keywords": ["clipboard", "uppercase", "lowercase", "text"]
+    }
+  ]
+}
