@@ -169,6 +169,163 @@ button {
   line-height: 1.25;
 }
 
+.settings-shell {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  min-width: 100vw;
+  min-height: 100vh;
+  color: #e7eaf0;
+  background: #111318;
+}
+
+.settings-sidebar {
+  display: grid;
+  grid-template-rows: 82px minmax(0, 1fr);
+  min-height: 100vh;
+  background: #151a22;
+  border-right: 1px solid #2a3444;
+  -webkit-app-region: drag;
+}
+
+.settings-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 18px;
+  color: #f8fafc;
+  font-size: 17px;
+  font-weight: 800;
+  border-bottom: 1px solid #263141;
+}
+
+.settings-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #101318;
+  background: #7cc7a2;
+  border-radius: 8px;
+}
+
+.settings-menu {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 12px;
+  overflow: auto;
+  -webkit-app-region: no-drag;
+}
+
+.settings-menu-item {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  min-height: 62px;
+  padding: 10px 12px;
+  color: #c5d1e1;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+
+.settings-menu-item:hover,
+.settings-menu-item:focus-visible {
+  background: #1d2531;
+  outline: none;
+}
+
+.settings-menu-item.active {
+  color: #f8fafc;
+  background: #223044;
+  border-color: #37506e;
+}
+
+.settings-menu-item strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.settings-menu-item small {
+  overflow: hidden;
+  color: #8fa0b6;
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-content {
+  display: grid;
+  grid-template-rows: 82px minmax(0, 1fr);
+  min-width: 0;
+  min-height: 100vh;
+  background: #101318;
+}
+
+.settings-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 22px 0 26px;
+  border-bottom: 1px solid #263141;
+  -webkit-app-region: drag;
+}
+
+.settings-content-header h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.settings-content-header p {
+  margin: 5px 0 0;
+  color: #8fa0b6;
+  font-size: 13px;
+}
+
+.settings-close {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #aab7c8;
+  background: #1a212c;
+  border: 1px solid #303b4d;
+  border-radius: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.settings-close:hover,
+.settings-close:focus-visible {
+  color: #ffffff;
+  background: #35202a;
+  border-color: #7f394b;
+  outline: none;
+}
+
+.settings-panel {
+  padding: 26px;
+  overflow: auto;
+}
+
+.settings-panel h2 {
+  margin: 0 0 8px;
+  color: #f8fafc;
+  font-size: 18px;
+}
+
+.settings-panel p {
+  max-width: 620px;
+  margin: 0;
+  color: #a5b2c4;
+  line-height: 1.6;
+}
+
 @media (max-width: 640px) {
   .shell {
     padding: 10px;

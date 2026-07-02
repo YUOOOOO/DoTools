@@ -15,34 +15,55 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pluginContexts = new Map<number, PluginContext>()
 
 let mainWindow: BrowserWindow | null = null
+let settingsWindow: BrowserWindow | null = null
 let launcherShortcut = ''
 
 function setLauncherExpanded(expanded: boolean) {
   if (!mainWindow) return
 
-  const bounds = mainWindow.getBounds()
-  mainWindow.setResizable(true)
-  mainWindow.setBounds({
-    ...bounds,
-    height: expanded ? 430 : 92,
-  })
-  mainWindow.setResizable(false)
+  const width = 760
+  const height = expanded ? 430 : 92
+
+  if (expanded) {
+    mainWindow.setMaximumSize(width, height)
+    mainWindow.setMinimumSize(width, height)
+  } else {
+    mainWindow.setMinimumSize(width, height)
+    mainWindow.setMaximumSize(width, height)
+  }
+
+  mainWindow.setSize(width, height)
 }
 
 function getPreloadPath() {
   return path.join(process.cwd(), 'electron', 'preload.cjs')
 }
 
+function loadRenderer(window: BrowserWindow, view?: string) {
+  if (process.env.VITE_DEV_SERVER_URL) {
+    const url = new URL(process.env.VITE_DEV_SERVER_URL)
+    if (view) url.searchParams.set('view', view)
+    void window.loadURL(url.toString())
+    return
+  }
+
+  void window.loadFile(path.join(__dirname, '../dist/index.html'), {
+    query: view ? { view } : undefined,
+  })
+}
+
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 760,
     height: 92,
-    minWidth: 640,
+    minWidth: 760,
+    maxWidth: 760,
     minHeight: 92,
+    maxHeight: 92,
     title: 'DoTools',
     show: false,
     frame: false,
-    resizable: false,
+    resizable: true,
     maximizable: false,
     fullscreenable: false,
     alwaysOnTop: true,
@@ -70,18 +91,46 @@ function createMainWindow() {
 
     if (input.control || input.alt || input.meta) return
 
-    if (input.key.length === 1 || input.key === 'Backspace' || input.key === 'Delete') {
-      setLauncherExpanded(true)
-    }
+    setLauncherExpanded(true)
   })
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    void mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
+    loadRenderer(mainWindow)
     mainWindow.webContents.openDevTools({ mode: 'detach' })
     return
   }
 
-  void mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+  loadRenderer(mainWindow)
+}
+
+function createSettingsWindow() {
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
+    settingsWindow.show()
+    settingsWindow.focus()
+    return
+  }
+
+  settingsWindow = new BrowserWindow({
+    width: 980,
+    height: 640,
+    minWidth: 860,
+    minHeight: 560,
+    title: 'DoTools Settings',
+    frame: false,
+    backgroundColor: '#111318',
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      preload: getPreloadPath(),
+    },
+  })
+
+  settingsWindow.on('closed', () => {
+    settingsWindow = null
+  })
+
+  loadRenderer(settingsWindow, 'settings')
 }
 
 function showLauncher() {
@@ -229,6 +278,11 @@ ipcMain.handle('app:getLauncherShortcut', () => launcherShortcut)
 
 ipcMain.handle('app:hideLauncher', () => {
   mainWindow?.hide()
+})
+
+ipcMain.handle('app:openSettings', () => {
+  mainWindow?.hide()
+  createSettingsWindow()
 })
 
 ipcMain.handle('clipboard:readText', (event) => {

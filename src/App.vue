@@ -2,12 +2,26 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import type { LauncherCommand } from '../shared/plugin'
 
+type SettingsMenuId = 'general' | 'plugins' | 'shortcuts' | 'permissions' | 'about'
+
+const isSettingsView = new URLSearchParams(window.location.search).get('view') === 'settings'
 const commands = ref<LauncherCommand[]>([])
 const query = ref('')
 const loading = ref(true)
 const error = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
+const activeMenu = ref<SettingsMenuId>('general')
 let removeLauncherShowListener: (() => void) | undefined
+
+const settingsMenus: Array<{ id: SettingsMenuId; title: string; description: string }> = [
+  { id: 'general', title: 'General', description: 'Startup and appearance' },
+  { id: 'plugins', title: 'Plugins', description: 'Plugin management' },
+  { id: 'shortcuts', title: 'Shortcuts', description: 'Hotkeys and commands' },
+  { id: 'permissions', title: 'Permissions', description: 'System access grants' },
+  { id: 'about', title: 'About', description: 'Version and project info' },
+]
+
+const activeMenuItem = computed(() => settingsMenus.find((item) => item.id === activeMenu.value) ?? settingsMenus[0])
 
 const filteredCommands = computed(() => {
   const value = query.value.trim().toLowerCase()
@@ -40,9 +54,11 @@ async function loadCommands() {
 }
 
 function openSettings() {
-  void window.doTools?.plugins.reload().then((value) => {
-    commands.value = value
-  })
+  void window.doTools?.app.openSettings()
+}
+
+function closeWindow() {
+  void window.doTools?.app.closePlugin()
 }
 
 function openCommand(command: LauncherCommand) {
@@ -69,6 +85,8 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 onMounted(() => {
+  if (isSettingsView) return
+
   void loadCommands()
 
   removeLauncherShowListener = window.doTools?.app.onLauncherShow(() => {
@@ -89,7 +107,68 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <main class="shell">
+  <main v-if="isSettingsView" class="settings-shell">
+    <aside class="settings-sidebar">
+      <div class="settings-logo">
+        <span class="settings-logo-mark">D</span>
+        <span>DoTools</span>
+      </div>
+
+      <nav class="settings-menu" aria-label="Settings menu">
+        <button
+          v-for="item in settingsMenus"
+          :key="item.id"
+          :class="['settings-menu-item', { active: item.id === activeMenu }]"
+          type="button"
+          @click="activeMenu = item.id"
+        >
+          <strong>{{ item.title }}</strong>
+          <small>{{ item.description }}</small>
+        </button>
+      </nav>
+    </aside>
+
+    <section class="settings-content">
+      <header class="settings-content-header">
+        <div>
+          <h1>{{ activeMenuItem.title }}</h1>
+          <p>{{ activeMenuItem.description }}</p>
+        </div>
+        <button class="settings-close" type="button" aria-label="Close settings" @click="closeWindow">
+          X
+        </button>
+      </header>
+
+      <div class="settings-panel">
+        <template v-if="activeMenu === 'general'">
+          <h2>Application</h2>
+          <p>Startup, appearance, and launcher behavior will be configured here.</p>
+        </template>
+
+        <template v-else-if="activeMenu === 'plugins'">
+          <h2>Plugins</h2>
+          <p>Installed plugins, plugin directories, and plugin updates will be managed here.</p>
+        </template>
+
+        <template v-else-if="activeMenu === 'shortcuts'">
+          <h2>Shortcuts</h2>
+          <p>Global launcher shortcut and command shortcuts will be configured here.</p>
+        </template>
+
+        <template v-else-if="activeMenu === 'permissions'">
+          <h2>Permissions</h2>
+          <p>Plugin permissions and system access grants will be reviewed here.</p>
+        </template>
+
+        <template v-else>
+          <h2>About</h2>
+          <p>DoTools Electron + Vue plugin platform MVP.</p>
+        </template>
+      </div>
+    </section>
+  </main>
+
+  <main v-else class="shell">
     <section class="launcher" aria-label="DoTools launcher">
       <div class="searchbar">
         <input

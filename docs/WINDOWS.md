@@ -11,7 +11,7 @@ Current behavior:
 - Shown by global shortcut.
 - Always on top.
 - Skipped from taskbar.
-- User resizing is disabled.
+- User resizing is disabled by locking minimum and maximum size to the active launcher size.
 - Hidden on blur.
 - Hidden on `Esc`.
 - Initial size: `760 x 92`.
@@ -19,7 +19,7 @@ Current behavior:
 
 Expansion is controlled by the Electron main process using `before-input-event`.
 
-Programmatic expansion temporarily enables resizing, applies the new bounds, and disables resizing again. This keeps the launcher from being manually resized while preserving the `92px` to `430px` expansion behavior.
+Programmatic expansion changes the locked minimum and maximum size together. This keeps the launcher from being manually resized while preserving the `92px` to `430px` expansion behavior.
 
 Reason:
 
@@ -72,3 +72,16 @@ The sample `Text Tools` plugin includes:
 - draggable titlebar
 - pin button
 - close button
+
+## Settings Window
+
+The settings window is opened from the launcher's gear button.
+
+Current behavior:
+
+- Frameless window.
+- Fixed two-column layout.
+- Left column contains the logo and built-in menu.
+- Right column displays the selected built-in menu content.
+- Menu selection changes right-side content in the same window.
+- The header area is draggable.

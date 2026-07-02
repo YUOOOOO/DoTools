@@ -37,6 +37,7 @@ const api = {
     getPluginContext: (): Promise<PluginContext | null> => ipcRenderer.invoke('app:getPluginContext'),
     getLauncherShortcut: (): Promise<string> => ipcRenderer.invoke('app:getLauncherShortcut'),
     hideLauncher: (): Promise<void> => ipcRenderer.invoke('app:hideLauncher'),
+    openSettings: (): Promise<void> => ipcRenderer.invoke('app:openSettings'),
     closePlugin: (): Promise<void> => ipcRenderer.invoke('app:closePlugin'),
     setAlwaysOnTop: (pinned: boolean): Promise<void> => ipcRenderer.invoke('app:setAlwaysOnTop', pinned),
     isAlwaysOnTop: (): Promise<boolean> => ipcRenderer.invoke('app:isAlwaysOnTop'),

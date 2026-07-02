@@ -22,8 +22,11 @@ This file records user-visible behavior as features are added.
 ## Settings Entry
 
 - Launcher input has a gear icon button on the right.
-- The current implementation reloads plugin commands as a placeholder action.
-- A real settings page still needs to be added.
+- The gear button opens a dedicated settings window.
+- The settings window uses a fixed two-column layout.
+- The left column contains the logo and built-in menu.
+- The right column renders the selected built-in menu content.
+- Built-in menu content does not open new windows or separate pages.
 
 ## Example Plugin
 
